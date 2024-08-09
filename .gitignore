@@ -1,0 +1,4 @@
+aptos/.aptos
+/aptos/build/
+/*/*/.git
+/node_modules/
