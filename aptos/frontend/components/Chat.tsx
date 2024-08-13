@@ -18,7 +18,69 @@ interface Message {
 // instantiate the client
 const client = createSurfClient(new Aptos(new AptosConfig({ fullnode: "https://aptos.devnet.m1.movementlabs.xyz" })));
 
-const abi = { "address": "0x8c9e3104a866a70ebee3d3aab02ff66d5d7a70993f0f04899f5424d47bf1d10a", "name": "Chat", "friends": [], "exposed_functions": [{ "name": "create_chat_room", "visibility": "public", "is_entry": true, "is_view": false, "generic_type_params": [], "params": ["&signer"], "return": [] }, { "name": "get_messages", "visibility": "public", "is_entry": false, "is_view": true, "generic_type_params": [], "params": ["address"], "return": ["vector<0x5548665475c1807d19e3fc20bfb45cae242a14fce51ae1abb891ad06639c805e::Chat::Message>"] }, { "name": "post", "visibility": "public", "is_entry": true, "is_view": false, "generic_type_params": [], "params": ["&signer", "vector<u8>", "vector<u8>", "address"], "return": [] }, { "name": "post_with_ref", "visibility": "public", "is_entry": true, "is_view": false, "generic_type_params": [], "params": ["&signer", "vector<u8>", "address", "vector<u8>", "address"], "return": [] }], "structs": [{ "name": "ChatRoom", "is_native": false, "abilities": ["store", "key"], "generic_type_params": [], "fields": [{ "name": "messages", "type": "vector<0x5548665475c1807d19e3fc20bfb45cae242a14fce51ae1abb891ad06639c805e::Chat::Message>" }, { "name": "message_count", "type": "u64" }] }, { "name": "Message", "is_native": false, "abilities": ["copy", "store", "key"], "generic_type_params": [], "fields": [{ "name": "sender", "type": "address" }, { "name": "text", "type": "vector<u8>" }, { "name": "timestamp", "type": "u64" }, { "name": "ref_id", "type": "0x1::option::Option<address>" }, { "name": "metadata", "type": "vector<u8>" }] }] } as const;
+const abi = { "address": "0x8c9e3104a866a70ebee3d3aab02ff66d5d7a70993f0f04899f5424d47bf1d10a", "name": "Chat", "friends": [], "exposed_functions": [
+    {
+        "name": "mint",
+        "visibility": "public",
+        "is_entry": true,
+        "is_view": false,
+        "generic_type_params": [],
+        "params": ["&signer","address","string"],
+        "return": []
+    },
+    {
+        "name": "add_component",
+        "visibility": "public",
+        "is_entry": true,
+        "is_view": false,
+        "generic_type_params": [],
+        "params": ["&signer", "u64", "address", "bool", "string"],
+        "return": []
+      },
+      {
+        "name": "remove_component",
+        "visibility": "public",
+        "is_entry": true,
+        "is_view": false,
+        "generic_type_params": [],
+        "params": ["&signer", "u64", "u64"],
+        "return": []
+      },
+      {
+        "name": "modify_component",
+        "visibility": "public",
+        "is_entry": true,
+        "is_view": false,
+        "generic_type_params": [],
+        "params": ["&signer", "u64", "u64", "address", "bool"],
+        "return": []
+      }
+], 
+    "structs": [
+        {
+            "name": "Component",
+            "is_native": false,
+            "abilities": ["store", "key"],
+            "generic_type_params": [],
+            "fields": [
+              { "name": "id", "type": "u64" },
+              { "name": "owner", "type": "address" },
+              { "name": "transferable", "type": "bool" },
+              { "name": "image_url", "type": "string" }
+            ]
+          },
+          {
+            "name": "Body",
+            "is_native": false,
+            "abilities": ["store", "key"],
+            "generic_type_params": [],
+            "fields": [
+              { "name": "id", "type": "u64" },
+              { "name": "owner", "type": "address" },
+              { "name": "components", "type": "vector<Component>" }
+            ]
+          }
+    ] } as const;
 export default function Chat() {
     const [history, setHistory] = useState([] as Message[]);
     const [message, setMessage] = useState("hello");
@@ -33,34 +95,12 @@ export default function Chat() {
         data: submitResult,
     } = useSubmitTransaction();
 
-    const getMessages = async () => {
-        const [messages] = await client.useABI(abi).view.get_messages({
-            functionArguments: [abi.address],
-            typeArguments: [],
-        })
-        console.log(messages);
-        console.log(account?.address)
-        setHistory(messages as Message[]);
-        await reset();
-        const container = document.getElementById("scrollableContainer");
-        //@ts-ignore
-        container.scrollTop = container.scrollHeight;
-    }
-
-    useEffect(() => {
-        getMessages();
-        const intervalId = setInterval(getMessages, 5000);
-
-        return () => clearInterval(intervalId);
-    }, [account?.address, submitResult, submitError, submitIsLoading])
-
-
     const postMessage = async () => {
         try {
             const payload = createEntryPayload(abi, {
-                function: 'post',
+                function: 'mint',
                 typeArguments: [],
-                functionArguments: [message, [], abi.address],
+                functionArguments: [[], abi.address,''],
 
             });
             const tx = await submitTransaction(payload);
@@ -70,9 +110,6 @@ export default function Chat() {
         }
     };
 
-    const updateMessage = (e: any) => {
-        setMessage(e.target.value);
-    };
 
     return (
         <div className="grid grid-flow-col-1 group rounded-lg border border-transparent px-5 py-4 transition-colors border-gray-300 dark:border-neutral-700 dark:bg-neutral-800/30">

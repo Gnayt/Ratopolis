@@ -12,7 +12,24 @@ module Rat {
         transferable: bool,
         components: vector<Component>
     }
+    public fun mint(recipient: address, token_uri: string): U64 {
+        // Generate a unique ID for the NFT
+        let token_id = self.token_counter;
+        self.token_counter = token_id + 1;
 
+        // Create a new NFT with the specified token URI
+        let nft = NFT {
+            id: token_id,
+            owner: recipient,
+            token_uri: token_uri,
+        };
+
+        // Add the NFT to the recipient's collection
+        self.nfts.add(recipient, nft);
+
+        // Return the ID of the minted NFT
+        token_id
+    }
     public fun add_component(composite: &mut Body, component: Component) {
         assert!(composite.owner == component.owner, 0);
         composite.components.push_back(component);
