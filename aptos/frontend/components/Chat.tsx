@@ -7,6 +7,8 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { NextResponse } from "next/server";
 import { hex2a, formatDate, formatAddress } from "@/util/functions";
 
+import { getAdapter } from "@/util/connect";
+
 interface Message {
     sender: string;
     text: string,
@@ -118,6 +120,7 @@ export default function Chat() {
 
     return (
         <div className="grid grid-flow-col-1 group rounded-lg border border-transparent px-5 py-4 transition-colors border-gray-300 dark:border-neutral-700 dark:bg-neutral-800/30">
+            <button onClick={() => { getAdapter()}}> Connect </button >
             <button className="bg-black border-gray-300 rounded-lg border-[1px] text-white" onClick={postMessage}>Send</button>
         </div>
     )

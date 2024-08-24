@@ -5,11 +5,15 @@ import Chat from "../components/Chat";
 import { AptosWalletAdapterProvider, useWallet } from "@aptos-labs/wallet-adapter-react";
 import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
 import { NightlyWallet } from '@nightlylabs/aptos-wallet-adapter-plugin'
+import StickyHeader from "@/components/StickyHeader";
 
 export default function Home() {
   const wallets = [new NightlyWallet()];
 
   return (
+    
+    <>
+    <StickyHeader />
     <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
       <main className="flex min-h-screen flex-col items-center justify-between p-12">
         <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-lg lg:flex">
@@ -42,5 +46,6 @@ export default function Home() {
 
       </main>
     </AptosWalletAdapterProvider>
+    </>
   );
 }

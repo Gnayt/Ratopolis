@@ -13,12 +13,14 @@
     "@aptos-labs/wallet-adapter-ant-design": "^2.0.0",
     "@aptos-labs/wallet-adapter-react": "^2.1.8",
     "@nightlylabs/aptos-wallet-adapter-plugin": "^0.2.12",
+    "@nightlylabs/wallet-selector-aptos": "^0.1.6",
     "@razorlabs/wallet-kit": "^0.4.1",
     "@thalalabs/surf": "^1.2.0",
     "next": "14.1.0",
     "petra-plugin-wallet-adapter": "^0.4.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sonner": "^1.5.0"
   },
   "devDependencies": {
     "@types/node": "^20",
