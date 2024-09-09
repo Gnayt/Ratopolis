@@ -1,0 +1,16 @@
+{
+  "name": "setupcollectionaptos",
+  "version": "1.0.0",
+  "description": "My Setup for Collection for Ratopolis",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aptos-labs/ts-sdk": "^1.27.1"
+  },
+  "type": "module"
+}
